@@ -5,6 +5,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import puertos.control.BarcoException;
 import puertos.control.Puerto;
 
@@ -39,6 +43,8 @@ public class VentanaControlBarcos extends JFrame {
 	private JTextField campoVolumen;
 	private JTextField campoCapacidad;
 	private JTextField campoPasajeros;
+	private JRadioButton opcionVelero;
+	private JRadioButton opcionCarguero;
 	private final ButtonGroup opcionesTipoBarco = new ButtonGroup();
 	private JCheckBox checkLiquidos;
 	private JTextField campoMatricula;
@@ -164,7 +170,7 @@ public class VentanaControlBarcos extends JFrame {
 		constraintslblTipo.gridy = 4;
 		contentPane.add(lblTipo, constraintslblTipo);
 		
-		JRadioButton opcionVelero = new JRadioButton("Velero");
+		opcionVelero = new JRadioButton("Velero");
 		opcionVelero.setActionCommand("velero");
 		opcionesTipoBarco.add(opcionVelero);
 		GridBagConstraints constraintsopcionVelero = new GridBagConstraints();
@@ -175,7 +181,7 @@ public class VentanaControlBarcos extends JFrame {
 		constraintsopcionVelero.gridy = 4;
 		contentPane.add(opcionVelero, constraintsopcionVelero);
 		
-		JRadioButton opcionCarguero = new JRadioButton("Carguero");
+		opcionCarguero = new JRadioButton("Carguero");
 		opcionCarguero.setActionCommand("carguero");
 		opcionesTipoBarco.add(opcionCarguero);
 		GridBagConstraints constraintsopcionCarguero = new GridBagConstraints();
@@ -305,5 +311,63 @@ public class VentanaControlBarcos extends JFrame {
 	public void calcularCapacidad() {
 		double capacidad = puerto.calcularCapacidadTotal();
 		campoCapacidad.setText(""+capacidad);
+	}
+	
+	/**
+	 * Acciones que se toman cuando se presiona el botón "Consultar Barco".
+	 * Se debe obtene la matrícula, y mostrar los valores del barco
+	 * en los campos correspondientes
+	 */
+	public void consultarBarco() {
+		
+		String matricula = campoMatricula.getText();
+		String datosJson = puerto.consultarDatosBarco(matricula);
+		
+		if (datosJson == null) {
+			JOptionPane.showMessageDialog(this,"No se encontró un barco con esa matrícula",
+					"Barco no encontrado",JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			JsonNode nodoJson = objectMapper.readTree(datosJson);
+			
+			JsonNode valor = nodoJson.get("nacionalidad");
+			String nacionalidad = valor!=null?valor.asText():"";
+			campoNacionalidad.setText(nacionalidad);
+			
+			valor = nodoJson.get("volumen");
+			String volumen = valor!=null?valor.asText():"";
+			campoNacionalidad.setText(volumen);
+				
+			valor = nodoJson.get("tipo");
+			String tipo = valor!=null?valor.asText():"";
+			switch (tipo) {
+				case "velero": 
+					opcionVelero.setSelected(true);
+					opcionCarguero.setSelected(false);
+					break;
+				case "carguero":
+					opcionCarguero.setSelected(true);
+					opcionVelero.setSelected(false);
+					break;
+				default:
+					opcionVelero.setSelected(false);
+					opcionCarguero.setSelected(false);
+			}
+			
+			valor = nodoJson.get("pasajeros");
+			String pasajeros = valor!=null?valor.asText():"";
+			campoNacionalidad.setText(pasajeros);
+			
+			valor = nodoJson.get("liquidos");
+			String liquidosCadena = valor!=null?valor.asText():"false";
+			boolean liquidos = Boolean.parseBoolean(liquidosCadena);
+			checkLiquidos.setSelected(liquidos);
+
+		} catch (JsonProcessingException e) {
+			// En este caso se puede escribir en un log el error
+		}
 	}
 }
