@@ -18,7 +18,7 @@ public class Puerto {
 	private final double VOLUMEN_MAXIMO = 1000;
 	
 	public Puerto() {
-		repositorio = FabricaRepositorios.crearRepositorio("Orm");
+		repositorio = FabricaRepositorios.crearRepositorio("Lista");
 	}
 	
 	public Puerto(RepositorioBarcos repositorio) {

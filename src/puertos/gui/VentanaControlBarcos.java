@@ -110,13 +110,24 @@ public class VentanaControlBarcos extends JFrame {
 		
 		campoMatricula = new JTextField();
 		GridBagConstraints constraintscampoMatricula = new GridBagConstraints();
-		constraintscampoMatricula.anchor = GridBagConstraints.NORTHWEST;
-		constraintscampoMatricula.insets = new Insets(0, 0, 5, 0);
-		constraintscampoMatricula.gridwidth = 2;
+		constraintscampoMatricula.anchor = GridBagConstraints.WEST;
+		constraintscampoMatricula.insets = new Insets(0, 0, 5, 5);
 		constraintscampoMatricula.gridx = 1;
 		constraintscampoMatricula.gridy = 1;
 		contentPane.add(campoMatricula, constraintscampoMatricula);
 		campoMatricula.setColumns(10);
+		
+		JButton btnConsultarBarco = new JButton("Consultar Barco");
+		btnConsultarBarco.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				consultarBarco();
+			}
+		});
+		GridBagConstraints gbc_btnConsultarBarco = new GridBagConstraints();
+		gbc_btnConsultarBarco.insets = new Insets(0, 0, 5, 0);
+		gbc_btnConsultarBarco.gridx = 2;
+		gbc_btnConsultarBarco.gridy = 1;
+		contentPane.add(btnConsultarBarco, gbc_btnConsultarBarco);
 		
 		JLabel lblNacionalidad = new JLabel("Nacionalidad:");
 		GridBagConstraints constraintslblNacionalidad = new GridBagConstraints();
@@ -339,7 +350,7 @@ public class VentanaControlBarcos extends JFrame {
 			
 			valor = nodoJson.get("volumen");
 			String volumen = valor!=null?valor.asText():"";
-			campoNacionalidad.setText(volumen);
+			campoVolumen.setText(volumen);
 				
 			valor = nodoJson.get("tipo");
 			String tipo = valor!=null?valor.asText():"";
@@ -359,7 +370,7 @@ public class VentanaControlBarcos extends JFrame {
 			
 			valor = nodoJson.get("pasajeros");
 			String pasajeros = valor!=null?valor.asText():"";
-			campoNacionalidad.setText(pasajeros);
+			campoPasajeros.setText(pasajeros);
 			
 			valor = nodoJson.get("liquidos");
 			String liquidosCadena = valor!=null?valor.asText():"false";

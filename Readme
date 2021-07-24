@@ -22,11 +22,13 @@ Funcionalidad básica: en un puerto se tiene el registro de los barcos que llega
 	 groupId: com.fasterxml.jackson.core, artifactId: jackson-databind
 	Se crea un método en Barco para retorner los datos del barco como JSON 
 	 (usando librería), y las hijas lo sobrescriben para adicionar el tipo de barco.
-	Se crea la clase "BarcoTest" para hacer pruebas a este método (obtenerDatosJson).
 	Se crea un método consultar en Puerto, que retorna un String (formato JSON),
 	 a partir del barco buscado con su matrícula.
 	Se adiciona el botón "Consultar" en la ventana, que llama al nuevo método
 	 de Puerto y muestra la información en los campos correspondientes. 
+	 
+ 	Se crean las clases "BarcoTest" y "PuertoConsultarBarcoTest" para hacer pruebas
+ 	 a los nuevos métodos.
 	
 *********** CAMBIOS con respecto a v5
 - Se trabaja con un ORM: EclipseLink, para facilitar el trabajo con una base de datos.
