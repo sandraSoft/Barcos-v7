@@ -1,0 +1,81 @@
+PROYECTO BARCOS - v7
+Universidad de Caldas
+Ingeniería de Software
+2018 - 2021
+
+Proyecto usado como ejemplo de algunos conceptos de orientación a objetos.
+No es un proyecto completo, pues la idea es que los estudiantes, como ejercicio, 
+  realicen pruebas,adicionen validaciones y otras funcionalidades.
+
+Funcionalidad básica: en un puerto se tiene el registro de los barcos que llegan,
+ y, además de unos datos básicos, se desea conocer la capacidad de cada barco,
+ para poder obtener la capacidad total que maneja el puerto.
+
+*********** CAMBIOS con respecto a v6
+- Se adiciona la funcionalidad de Consultar un Barco, dada su matrícula. 
+  Se desea que la clase con la interfaz gráfica no reciba un objeto Barco 
+  (para cumplir con lineamientos arquítectonicos), por que el método de
+  consulta en la clase Puerto retona otro tipo de dato.
+  Para esto:
+	Se adiciona en el pom.xml una dependencia para usar una librería que facilite
+	 el trabajo con JSON:
+	 groupId: com.fasterxml.jackson.core, artifactId: jackson-databind
+	Se crea un método en Barco para retorner los datos del barco como JSON 
+	 (usando librería), y las hijas lo sobrescriben para adicionar el tipo de barco.
+	Se crea la clase "BarcoTest" para hacer pruebas a este método (obtenerDatosJson).
+	Se crea un método consultar en Puerto, que retorna un String (formato JSON),
+	 a partir del barco buscado con su matrícula.
+	Se adiciona el botón "Consultar" en la ventana, que llama al nuevo método
+	 de Puerto y muestra la información en los campos correspondientes. 
+	
+*********** CAMBIOS con respecto a v5
+- Se trabaja con un ORM: EclipseLink, para facilitar el trabajo con una base de datos.
+  Para esto:
+	Se convierte el proyecto en un proyecto Maven y en el pom.xml se incluyen las dependencias a
+	  las librerías necesarias (de eclipselink y jpa). La versión usada es la 3.0.0
+	  groupId: org.eclipse.persistence, artifactId: eclipselink
+	  groupId: org.eclipse.persistence, artifactId: org.eclipse.persistence.jpa
+  	Se adicionan constructores por defecto y métodos set en las clases de entidad (Barco, Velero y Carguero).
+  	Se adicionan anotaciones en las clases de entidad para definir cómo será el mapeo hacia la base de datos.
+  	Se adiciona el archivo "persistence.xml" en la carpeta META-INF, 
+  	  con la configuración de la conexión con la base de datos, y define la "persistence unit" llamada jpaBarcos
+	Se crea una clase llamada OrmBarcos, que implementa la interfaz de persistencia,
+	  donde se usa JPA para el trabajo con la base de datos. 
+- Se crea la clase "FabricaRepositorios", que corresponde al patrón Simple Factory,
+  para que la clase Puerto no tenga que conocer los repositorios concretos.
+  Se cambia el constructor de Puerto para que use la fábrica (inicialmente con un tipo de repositorio fijo - Orm).
+ 
+*********** CAMBIOS con respecto a v4
+- Se separan las responsabilidades que tenía la clase "BaseDatosBarco", 
+  (para cumplir el principio de Single Responsibility), y se crean dos nuevas clases:
+  	GestorConexionBd (encargada de abrir y cerrar la conexión a la base de datos) y
+  	ConversorSql (encargada de crear las sentencias SQL para los objetos barco).
+- Se crea una clase "FabricaBarcos" que corresponde al patrón Simple Factory,
+	para que cree los objetos Velero y Carguero, y así la clase Puerto
+	no tiene que conocer estas clases hijas al crear el barco, sino solo la clase padre.  
+
+*********** CAMBIOS con respecto a v3 
+- Se adicionan pruebas unitarias (y al gunas de integración) con JUnit. 
+	Para esto se crea un nuevo folder llamado "test" con las clases de prueba.
+- Se hacen cambios en Velero y Carguero para que no retornen una capacidad negativa.
+- Se adiciona un constructor en la clase Puerto que recibe un repositorio 
+  (para facilitar las pruebas, enviando, por ejemplo, la lista y no la base de datos).
+
+*********** CAMBIOS con respecto a v2
+- Se adiciona una interfaz que ofrece los servicios para manejar la persistencia, y dos clases que la implementan.
+Se crea un nuevo paquete para esta interfaz y las clases:
+  Una para "simular" la persistencia con una lista en memoria
+  Una para acceso a base de datos (en este caso, SQLite)
+Cambian las clases de entidad porque se adicionan algunos métodos get que no tenían.
+Cambia la clase de control (para usar la interfaz).
+No cambia la interfaz gráfica.
+- Se adicionan como recursos adicionales para que funcione la base de datos:
+  El driver de conexión a SQLite. Se descarga el jar de: https://repo1.maven.org/maven2/org/xerial/sqlite-jdbc/
+  (la versión usada es la 3.34.0)
+  La base de datos, llamada "barcos.db", tiene la tabla "Barcos":
+   CREATE TABLE Barcos (matricula varchar(50) primary key, nacionalidad varchar(50),
+    volumen real, pasajeros integer, liquidos boolean, tipo varchar(20) not null);
+   
+*********** CAMBIOS con respecto a v1
+- Se crea una nueva excepción (BarcoException) para el manejo de los errores que tienen que ver la gestión de los barcos.
+  No cambian las clases de entidad. Cambia la clase de control y la interfaz gráfica.

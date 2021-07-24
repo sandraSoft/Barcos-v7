@@ -1,0 +1,10 @@
+/bin/
+/tmp/
+
+.project
+.classpath
+/.settings/
+
+*.db
+*.jar
+/target/
